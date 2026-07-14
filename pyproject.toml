@@ -1,0 +1,17 @@
+[project]
+name = "medical-edge-triage"
+version = "1.0.0"
+description = "AI-powered medical triage system using RAG, multi-pass reasoning, and counterfactual explanations"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.34.0",
+    "pydantic>=2.10.0",
+    "streamlit>=1.41.0",
+    "httpx>=0.28.0",
+    "numpy>=1.26.0",
+    "lancedb>=0.15.0",
+    "ollama>=0.4.0",
+    "python-dateutil>=2.9.0",
+    "sentence-transformers>=3.3.0",
+]
