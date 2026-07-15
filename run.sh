@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -e
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$SCRIPT_DIR"
 
 echo "=== Medical Edge Triage ==="
 
@@ -9,9 +11,11 @@ if ! curl -s http://localhost:11434/api/tags > /dev/null 2>&1; then
   sleep 3
 fi
 
-echo "Loading model (first load may take a few minutes)..."
+echo "Loading model..."
 curl -s http://localhost:11434/api/generate -d '{"model":"qwen2.5:3b","prompt":"hello","keep_alive":"30m"}' > /dev/null 2>&1 &
 
-source .venv/bin/activate
+source "$SCRIPT_DIR/.venv/bin/activate"
+export PYTHONPATH="$SCRIPT_DIR:$PYTHONPATH"
+
 echo "Starting Streamlit UI at http://localhost:8501"
-streamlit run src/ui/app.py --server.port 8501
+streamlit run "$SCRIPT_DIR/src/ui/app.py" --server.port 8501
