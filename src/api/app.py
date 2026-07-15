@@ -78,6 +78,6 @@ def health():
 def metrics():
     return {
         "embedding_model": "nomic-embed-text",
-        "reasoning_model": "qwen3:8b",
+        "reasoning_model": "qwen2.5:3b",
         "vector_db": "lancedb",
     }

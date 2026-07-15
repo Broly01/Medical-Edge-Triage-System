@@ -7,7 +7,7 @@ from typing import List
 class Config:
     ollama_base_url: str = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
     embedding_model: str = "nomic-embed-text"
-    reasoning_model: str = "qwen3:8b"
+    reasoning_model: str = "qwen2.5:3b"
 
     lancedb_uri: str = os.getenv("LANCEDB_URI", "data/lancedb")
     collection_name: str = "medical_triage"

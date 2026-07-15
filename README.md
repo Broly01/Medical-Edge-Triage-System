@@ -60,10 +60,10 @@ Two models are required:
 
 ```bash
 ollama pull nomic-embed-text     # 274 MB — embeddings
-ollama pull qwen3:8b             # 5.2 GB — LLM reasoning
+ollama pull qwen2.5:3b           # 1.7 GB — LLM reasoning
 ```
 
-> **Performance note:** On Apple M1 (8 GB RAM), qwen3:8b takes ~5 min to load on first inference, then ~90s per inference pass. For faster results, replace `qwen3:8b` with `qwen3:4b` or `llama3.2:3b` in `src/config.py`.
+> **Performance note:** qwen2.5:3b takes ~30s to load on first inference, then ~10s per inference pass.
 
 ### 4. Create Python Environment
 
@@ -103,15 +103,21 @@ This chunks the guidelines (512 tokens, 64 overlap), generates embeddings via `n
 
 ## Run
 
-### Streamlit UI (recommended)
+### Single Command (recommended)
+
+```bash
+./run.sh
+```
+
+This starts Ollama (if not running), preloads the model in background, and launches Streamlit UI at **http://localhost:8501**.
+
+### Streamlit UI
 
 ```bash
 streamlit run src/ui/app.py
 ```
 
-Open **http://localhost:8501** in your browser.
-
-Enter symptoms like `fever 39C headache stiff neck photophobia`, click **Analyze**, and see:
+Enter symptoms like `fever 39C headache stiff neck`, click **Analyze**, and see:
 - Triage level with color-coded urgency
 - Confidence score
 - Step-by-step reasoning
@@ -176,7 +182,7 @@ Response:
 ```json
 {
   "embedding_model": "nomic-embed-text",
-  "reasoning_model": "qwen3:8b",
+  "reasoning_model": "qwen2.5:3b",
   "vector_db": "lancedb"
 }
 ```
@@ -197,7 +203,7 @@ print(result.triage_level, result.confidence)
 | **Vector Search** | LanceDB — Approximate Nearest Neighbor (IVF + Product Quantization) |
 | **Reranking** | Term-overlap scoring: `|query_terms ∩ chunk_terms| / |query_terms|` |
 | **Temporal Filtering** | Threshold: `current_date − source_date > 24 months → flag` |
-| **LLM Reasoning** | Qwen 3 8B — Transformer decoder, Grouped-Query Attention, MoE |
+| **LLM Reasoning** | Qwen 2.5 3B — Transformer decoder, Grouped-Query Attention |
 | **Uncertainty** | Variance: `1 − np.var(numeric_levels) / 4.0` |
 | **Multi-pass Sampling** | Random subset + shuffle from top-k chunks (stratified per pass) |
 | **Counterfactual** | Ablation: remove token → re-run full pipeline → compare |
@@ -228,6 +234,7 @@ print(result.triage_level, result.confidence)
 │       └── app.py                # Streamlit frontend
 ├── scripts/
 │   └── download_data.py          # Generates sample data
+├── run.sh                        # Single command: Ollama + model + Streamlit
 ├── run_api.py                    # Start FastAPI server
 ├── run_ui.py                     # Start Streamlit
 ├── run_ingest.py                 # Ingest documents
@@ -243,6 +250,4 @@ print(result.triage_level, result.confidence)
 | Model | Size | Purpose |
 |-------|------|---------|
 | `nomic-embed-text` | 274 MB | Text → 768-dim embeddings for vector search |
-| `qwen3:8b` | 5.2 GB | Clinical reasoning, structured JSON output |
-
-To switch models, edit `src/config.py`. Smaller alternatives: `qwen3:4b` (2.2 GB), `llama3.2:3b` (2.0 GB).
+| `qwen2.5:3b` | 1.7 GB | Clinical reasoning, structured JSON output |
